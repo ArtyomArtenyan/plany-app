@@ -1,8 +1,14 @@
 'use client';
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import plany_logo from '@/public/plany-logo.svg';
+import { Button } from './ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 const Navbar = () => {
+	const { isSignedIn, user } = useUser();
+
 	return (
 		<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 			<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
@@ -17,6 +23,38 @@ const Navbar = () => {
 					<span className='text-xl sm:text-2xl font-bold text-gray-900'>
 						Plany
 					</span>
+				</div>
+
+				<div className='flex items-center space-x-2 sm:space-x-4'>
+					{isSignedIn ? (
+						<div className='flex flex-col sm:flex-row items-end sm:items-center space-y-1 sm:space-y-0 sm:space-x-4'>
+							<span className='text-xs sm:text-sm text-gray-600 hidden sm:block'>
+								Welcome, {user.firstName ?? user.emailAddresses[0].emailAddress}
+							</span>
+							<Link href='/dashboard'>
+								<Button size='lg' className='text-xs sm:text-sm'>
+									Go to Dashboard <ArrowRight />
+								</Button>
+							</Link>
+						</div>
+					) : (
+						<div>
+							<SignInButton>
+								<Button
+									size='sm'
+									variant='ghost'
+									className='text-xs sm:text-sm'
+								>
+									SignIn
+								</Button>
+							</SignInButton>
+							<SignUpButton>
+								<Button size='lg' className='text-xs sm:text-sm px-4'>
+									SignUp
+								</Button>
+							</SignUpButton>
+						</div>
+					)}
 				</div>
 			</div>
 		</header>
