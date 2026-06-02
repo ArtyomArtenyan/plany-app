@@ -33,7 +33,11 @@ const Navbar = () => {
 									{user.firstName ?? user.emailAddresses[0].emailAddress}
 								</span>
 								<Link href='/dashboard'>
-									<Button size='lg' className='text-xs sm:text-sm'>
+									<Button
+										size='lg'
+										variant='default'
+										className='text-xs sm:text-sm  bg-gray-900'
+									>
 										Go to Dashboard <ArrowRight />
 									</Button>
 								</Link>
@@ -50,7 +54,10 @@ const Navbar = () => {
 									</Button>
 								</SignInButton>
 								<SignUpButton>
-									<Button size='lg' className='text-xs sm:text-sm px-5'>
+									<Button
+										size='lg'
+										className='text-xs sm:text-sm px-5 bg-gray-900'
+									>
 										SignUp
 									</Button>
 								</SignUpButton>
@@ -67,7 +74,7 @@ const Navbar = () => {
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
 					<div className='flex items-center space-x-2'>
 						<Image src={plany_logo} alt='Plany logo' width={35} height={30} />
-						<span className='text-xl sm:text-2xl font-bold text-[#2563EB]'>
+						<span className='text-xl sm:text-2xl font-bold text-gray-900'>
 							Plany
 						</span>
 					</div>
