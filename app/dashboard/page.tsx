@@ -1,13 +1,24 @@
 'use client';
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
-import { createBoard } from '@/lib/services';
+import { useBoards } from '@/lib/hooks/useBoards';
 import { useUser } from '@clerk/nextjs';
 import { Plus } from 'lucide-react';
 
 const DashboardPage = () => {
 	const { user } = useUser();
-
+	const { createBoard } = useBoards();
+	const hendleCreateBoard = async () => {
+		try {
+			await createBoard({
+				title: 'New Board',
+				description: 'My amazing planning board',
+				color: '#2563EB',
+			});
+		} catch (error) {
+			console.error('Failed to create board:', error);
+		}
+	};
 	return (
 		<div className='min-h-screen bg-gray-50'>
 			<Navbar />
@@ -20,6 +31,7 @@ const DashboardPage = () => {
 						Here's what's happening with your boards today.
 					</p>
 					<Button
+						onClick={hendleCreateBoard}
 						size='lg'
 						className='w-full sm:w-auto bg-gray-900 hover:bg-gray-800 py-5 px-4'
 					>
