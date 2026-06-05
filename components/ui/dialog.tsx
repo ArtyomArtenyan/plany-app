@@ -5,7 +5,8 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { XIcon } from "lucide-react"
+import { Lineicons } from "@lineiconshq/react-lineicons"
+import { XmarkStroke } from "@lineiconshq/free-icons"
 
 function Dialog({
   ...props
@@ -74,8 +75,7 @@ function DialogContent({
               className="absolute top-2 right-2"
               size="icon-sm"
             >
-              <XIcon
-              />
+              <Lineicons icon={XmarkStroke} size={16} />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>

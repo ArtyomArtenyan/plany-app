@@ -4,7 +4,8 @@ import Image from 'next/image';
 import plany_logo from '@/public/plany-logo.svg';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { Lineicons } from '@lineiconshq/react-lineicons';
+import { ArrowRightStroke } from '@lineiconshq/free-icons';
 import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
@@ -38,7 +39,7 @@ const Navbar = () => {
 										variant='default'
 										className='text-xs sm:text-sm  bg-gray-900'
 									>
-										Go to Dashboard <ArrowRight />
+										Go to Dashboard <Lineicons icon={ArrowRightStroke} size={16} className="ml-2" />
 									</Button>
 								</Link>
 							</div>

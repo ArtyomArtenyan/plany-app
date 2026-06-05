@@ -3,11 +3,12 @@ import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
 import { useBoards } from '@/lib/hooks/useBoards';
 import { useUser } from '@clerk/nextjs';
-import { Plus } from 'lucide-react';
+import { Lineicons } from '@lineiconshq/react-lineicons';
+import { PlusStroke } from '@lineiconshq/free-icons';
 
 const DashboardPage = () => {
 	const { user } = useUser();
-	const { createBoard } = useBoards();
+	const { createBoard, boards, isLoaded } = useBoards();
 	const hendleCreateBoard = async () => {
 		try {
 			await createBoard({
@@ -19,6 +20,7 @@ const DashboardPage = () => {
 			console.error('Failed to create board:', error);
 		}
 	};
+
 	return (
 		<div className='min-h-screen bg-gray-50'>
 			<Navbar />
@@ -28,14 +30,15 @@ const DashboardPage = () => {
 						Welcome, {user?.firstName ?? user?.emailAddresses[0].emailAddress}
 					</h1>
 					<p className='text-gray-600'>
-						Here's what's happening with your boards today.
+						Here&apos;s what&apos;s happening with your boards today.
 					</p>
 					<Button
 						onClick={hendleCreateBoard}
 						size='lg'
 						className='w-full sm:w-auto bg-gray-900 hover:bg-gray-800 py-5 px-4'
 					>
-						<Plus className='size-5 mr-1' /> Create Dashboard
+						<Lineicons icon={PlusStroke} size={20} className='mr-1' /> Create
+						Dashboard
 					</Button>
 				</div>
 			</main>
