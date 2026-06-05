@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Board } from '../superbase/types';
-import { createBoardWithDefaults } from '../services';
+import { createBoardWithDefaults, getBoards } from '../services';
 import { useUser } from '@clerk/nextjs';
 import { useSuperbase } from '../superbase/SupabaseProvider';
 
@@ -10,7 +10,32 @@ export const useBoards = () => {
 	const { user } = useUser();
 
 	const [boards, setBoards] = useState<Board[]>([]);
+	const [loaded, setLoading] = useState<Boolean>(false);
+	const [error, setError] = useState<String | null>(null);
 	const { supabase } = useSuperbase();
+
+	useEffect(() => {
+		if (!user || !supabase) return;
+
+		loadBoards();
+	}, [user, supabase]);
+
+	async function loadBoards() {
+		if (!user) {
+			throw new Error('User not authenticated');
+		}
+		try {
+			setLoading(true);
+			const boardsData = await getBoards(supabase!, user.id);
+			setBoards(boardsData);
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to load Boards');
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	async function createBoard({
 		title,
@@ -40,5 +65,5 @@ export const useBoards = () => {
 			console.error(error);
 		}
 	}
-	return { createBoard };
+	return { createBoard, boards, loaded, error };
 };

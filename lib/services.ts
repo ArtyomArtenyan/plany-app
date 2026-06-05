@@ -60,8 +60,6 @@ export async function createList(
 	if (error) throw new Error(error.message);
 	return data;
 }
- 
-
 
 export async function createBoardWithDefaults(
 	supabase: SupabaseClient,
