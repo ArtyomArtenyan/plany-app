@@ -1,6 +1,9 @@
-<svg width="35" height="30" viewBox="0 0 35 30" xmlns="http://www.w3.org/2000/svg">
-  <rect width="35" height="30" rx="6" fill="#2563EB" />
-  <path d="M10 8h8a5 5 0 0 1 0 10h-8V8z" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-  <path d="M10 18v5" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-  <circle cx="23" cy="21" r="2.5" fill="white" />
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Board Shape -->
+  <rect x="16" y="16" width="128" height="128" rx="24" stroke="#2563EB" stroke-width="8" />
+  <!-- Stylized "P" for Plany / Planning Board Lines -->
+  <path d="M56 48V112" stroke="#2563EB" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M56 48H88C103.464 48 116 61.4315 116 78C116 94.5685 103.464 108 88 108H56" stroke="#2563EB" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Internal Check/Line detail -->
+  <path d="M76 78H92" stroke="#2563EB" stroke-width="8" stroke-linecap="round" />
 </svg>

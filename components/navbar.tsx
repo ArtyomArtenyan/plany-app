@@ -4,7 +4,8 @@ import Image from 'next/image';
 import plany_logo from '@/public/plany-logo.svg';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { Lineicons } from '@lineiconshq/react-lineicons';
+import { ArrowRightStroke } from '@lineiconshq/free-icons';
 import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
@@ -18,9 +19,9 @@ const Navbar = () => {
 		return (
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
-					<div className='flex items-center space-x-2'>
-						<Image src={plany_logo} alt='Plany logo' width={35} height={30} />
-						<span className='text-xl sm:text-2xl font-bold text-gray-900'>
+					<div className='flex items-center space-x-2.5'>
+						<Image src={plany_logo} alt='Plany logo' width={40} height={40} className="w-auto h-10" />
+						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
 					</div>
@@ -33,8 +34,12 @@ const Navbar = () => {
 									{user.firstName ?? user.emailAddresses[0].emailAddress}
 								</span>
 								<Link href='/dashboard'>
-									<Button size='lg' className='text-xs sm:text-sm'>
-										Go to Dashboard <ArrowRight />
+									<Button
+										size='lg'
+										variant='default'
+										className='text-xs sm:text-sm  bg-gray-900'
+									>
+										Go to Dashboard <Lineicons icon={ArrowRightStroke} size={16} className="ml-2" />
 									</Button>
 								</Link>
 							</div>
@@ -50,7 +55,10 @@ const Navbar = () => {
 									</Button>
 								</SignInButton>
 								<SignUpButton>
-									<Button size='lg' className='text-xs sm:text-sm px-5'>
+									<Button
+										size='lg'
+										className='text-xs sm:text-sm px-5 bg-gray-900'
+									>
 										SignUp
 									</Button>
 								</SignUpButton>
@@ -65,9 +73,9 @@ const Navbar = () => {
 		return (
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
-					<div className='flex items-center space-x-2'>
-						<Image src={plany_logo} alt='Plany logo' width={35} height={30} />
-						<span className='text-xl sm:text-2xl font-bold text-[#2563EB]'>
+					<div className='flex items-center space-x-2.5'>
+						<Image src={plany_logo} alt='Plany logo' width={40} height={40} className="w-auto h-10" />
+						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
 					</div>

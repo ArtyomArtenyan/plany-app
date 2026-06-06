@@ -7,7 +7,7 @@ export type Board = {
 	color: string | null;
 	user_id: string;
 };
-export type Column = {
+export type Lists = {
 	id: number;
 	created_at: string;
 	board_id: number;
@@ -24,5 +24,5 @@ export type Task = {
 	due_date: string | null;
 	priority: 'low' | 'medium' | 'high';
 	sort_order: number;
-	column_id: number;
+	list_id: number;
 };
