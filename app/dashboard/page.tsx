@@ -6,7 +6,6 @@ import { useUser } from '@clerk/nextjs';
 import { Lineicons } from '@lineiconshq/react-lineicons';
 import {
 	DashboardSquare1Outlined,
-	FileXmarkStroke,
 	Funnel1Outlined,
 	Layout9Stroke,
 	MenuCheesburgerOutlined,
@@ -15,9 +14,17 @@ import {
 	Search1Outlined,
 	Spinner3Outlined,
 } from '@lineiconshq/free-icons';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 const DashboardPage = () => {
 	const { user } = useUser();
@@ -28,7 +35,7 @@ const DashboardPage = () => {
 			await createBoard({
 				title: 'New Board',
 				description: 'My amazing planning board',
-				color: '#2563EB',
+				color: 'bg-blue-500',
 			});
 		} catch (error) {
 			console.error('Failed to create board:', error);
@@ -115,7 +122,7 @@ const DashboardPage = () => {
 					</Card>
 				</div>
 
-				<div className='mb-6 sm:mb-8 flex gap-2 sm:flex-row flex-col justify-between'>
+				<div className='mb-6 sm:mb-8 flex gap-2 flex-col justify-between'>
 					<div className='grid grid-cols-2 sm:grid-cols-[1fr_auto_auto_auto] items-center gap-2 w-full'>
 						<div className='col-span-2 sm:col-span-1'>
 							<h2 className='text-xl sm:text-2xl font-bold text-gray-900'>
@@ -169,6 +176,93 @@ const DashboardPage = () => {
 							/>
 							<Input className='w-full pl-10' placeholder='Search boards...' />
 						</div>
+					</div>
+
+					<div className=''>
+						{boards.length === 0 ? (
+							<div className='flex items-center justify-center my-10 '>
+								<h2>No Boards Yet</h2>
+							</div>
+						) : viewMode === 'grid' ? (
+							<div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3'>
+								{boards.map(board => (
+									<Link href={`boards/${board.id}`} key={board.id}>
+										<Card className='hover:shadow-lg transition-shadow duration-300 mt-3'>
+											<CardHeader className='pb-3'>
+												<div className='flex items-center justify-between'>
+													<div className={`w-4 h-4 rounded ${board.color}`} />
+													<Badge
+														variant={'secondary'}
+														className='text-xs rounded'
+													>
+														New
+													</Badge>
+												</div>
+											</CardHeader>
+											<CardContent className='p-4 sm:p-6'>
+												<CardTitle className='text-base sm:text-lg mb-2'>
+													{board.title}
+												</CardTitle>
+												<CardDescription className='mb-4 text-sm'>
+													{board.description}
+												</CardDescription>
+												<div className='text-xs mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-1 sm:space-y-0'>
+													<span>
+														Created:{' '}
+														{new Date(board.created_at).toLocaleDateString()}
+													</span>
+													<span>
+														Updated:{' '}
+														{new Date(board.updated_at).toLocaleDateString()}
+													</span>
+												</div>
+											</CardContent>
+										</Card>
+									</Link>
+								))}
+							</div>
+						) : (
+							<div className='grid grid-cols-1 gap-3'>
+								{boards.map(board => (
+									<Link href={`boards/${board.id}`} key={board.id}>
+										<Card className='group hover:shadow-lg transition-shadow duration-300 mt-3'>
+											<CardHeader className='pb-3'>
+												<div className='flex items-center justify-between'>
+													<div
+														className={`w-4 
+														h-4 rounded ${board.color}`}
+													/>
+													<Badge
+														variant={'secondary'}
+														className='text-xs rounded'
+													>
+														New
+													</Badge>
+												</div>
+											</CardHeader>
+											<CardContent className='p-4 sm:p-6'>
+												<CardTitle className='text-base sm:text-lg mb-2 group-hover:text-blue-500 transition-colors'>
+													{board.title}
+												</CardTitle>
+												<CardDescription className='mb-4 text-sm'>
+													{board.description}
+												</CardDescription>
+												<div className='text-xs mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-1 sm:space-y-0'>
+													<span>
+														Created:{' '}
+														{new Date(board.created_at).toLocaleDateString()}
+													</span>
+													<span>
+														Updated:{' '}
+														{new Date(board.updated_at).toLocaleDateString()}
+													</span>
+												</div>
+											</CardContent>
+										</Card>
+									</Link>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 			</main>
