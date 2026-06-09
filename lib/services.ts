@@ -4,6 +4,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 /**
  * Boards
  **/
+
 export async function getBoards(
 	supabase: SupabaseClient,
 	userId: string,
@@ -16,6 +17,36 @@ export async function getBoards(
 
 	if (error) throw new Error(error.message);
 	return data || [];
+}
+export async function getBoard(
+	supabase: SupabaseClient,
+	boardId: string,
+): Promise<Board> {
+	const { data, error } = await supabase
+		.from('boards')
+		.select('*')
+		.eq('id', boardId)
+		.single();
+
+	if (error) throw new Error(error.message);
+
+	return data;
+}
+
+export async function updateBoard(
+	supabase: SupabaseClient,
+	boardId: string,
+	updates: Partial<Board>,
+): Promise<Board> {
+	const { data, error } = await supabase
+		.from('boards')
+		.update({ ...updates, updated_at: new Date().toISOString() })
+		.eq('id', boardId)
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+	return data;
 }
 
 export async function createBoard(
@@ -38,6 +69,21 @@ export async function createBoard(
 /**
  * Lists
  **/
+
+export async function getList(
+	supabase: SupabaseClient,
+	boardId: string,
+): Promise<Lists[]> {
+	const { data, error } = await supabase
+		.from('lists')
+		.select('*')
+		.eq('board_id', boardId)
+		.order('sort_order', { ascending: true });
+
+	if (error) throw new Error(error.message);
+
+	return data;
+}
 
 export async function createList(
 	supabase: SupabaseClient,

@@ -5,22 +5,38 @@ import plany_logo from '@/public/plany-logo.svg';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Lineicons } from '@lineiconshq/react-lineicons';
-import { ArrowRightStroke } from '@lineiconshq/free-icons';
+import {
+	ArrowLeftOutlined,
+	ArrowRightStroke,
+	Funnel1Outlined,
+	MenuMeatballs1Outlined,
+} from '@lineiconshq/free-icons';
 import { usePathname } from 'next/navigation';
 
-const Navbar = () => {
+type BoardInfo = {
+	boardTitle?: string;
+	isEditBoard?: () => void;
+};
+const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 	const { isSignedIn, user } = useUser();
 
 	const pathName = usePathname();
 	const isHomePage = pathName === '/';
 	const isDashboardPage = pathName === '/dashboard';
+	const isBoardPage = pathName.startsWith('/boards');
 
 	if (isHomePage) {
 		return (
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
 					<div className='flex items-center space-x-2.5'>
-						<Image src={plany_logo} alt='Plany logo' width={40} height={40} className="w-auto h-10" />
+						<Image
+							src={plany_logo}
+							alt='Plany logo'
+							width={40}
+							height={40}
+							className='w-auto h-10'
+						/>
 						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
@@ -39,7 +55,12 @@ const Navbar = () => {
 										variant='default'
 										className='text-xs sm:text-sm  bg-gray-900'
 									>
-										Go to Dashboard <Lineicons icon={ArrowRightStroke} size={16} className="ml-2" />
+										Go to Dashboard{' '}
+										<Lineicons
+											icon={ArrowRightStroke}
+											size={16}
+											className='ml-2'
+										/>
 									</Button>
 								</Link>
 							</div>
@@ -74,7 +95,13 @@ const Navbar = () => {
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
 					<div className='flex items-center space-x-2.5'>
-						<Image src={plany_logo} alt='Plany logo' width={40} height={40} className="w-auto h-10" />
+						<Image
+							src={plany_logo}
+							alt='Plany logo'
+							width={40}
+							height={40}
+							className='w-auto h-10'
+						/>
 						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
@@ -82,6 +109,54 @@ const Navbar = () => {
 
 					<div className='flex items-center space-x-2 sm:space-x-4'>
 						<UserButton />
+					</div>
+				</div>
+			</header>
+		);
+	}
+	if (isBoardPage) {
+		return (
+			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
+				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between gap-2'>
+					<div className='group flex items-center space-x-2.5'>
+						<Link href={'/dashboard'} className='flex items-center gap-3'>
+							<Lineicons
+								className='text-gray-600 group-hover:text-gray-900 transition-colors'
+								icon={ArrowLeftOutlined}
+							/>
+							<span className='hidden sm:inline text-gray-600 group-hover:text-gray-900 transition-colors'>
+								Back to Dashboard
+							</span>
+							<span className=' sm:hidden text-gray-600 group-hover:text-gray-900 transition-colors'>
+								Back
+							</span>
+						</Link>
+						<div className='w-px h-5 bg-gray-300 group-hover:bg-gray-900' />
+						<Image
+							src={plany_logo}
+							alt='Plany logo'
+							width={40}
+							height={40}
+							className='w-auto h-10'
+						/>
+						<span className='text-base hidden sm:text-lg sm:inline  font-bold  text-gray-900'>
+							{boardTitle}
+						</span>
+						<Button variant={'ghost'} onClick={isEditBoard}>
+							<Lineicons icon={MenuMeatballs1Outlined} className='size-5' />
+						</Button>
+					</div>
+					<div className='flex items-center gap-3 sm:gap-8'>
+						<Button
+							variant='ghost'
+							className=' w-fit  p-1 rounded-xl  py-5 px-4 '
+						>
+							<Lineicons icon={Funnel1Outlined} className='size-5.5' />
+							<span className='hidden sm:inline'>Filter</span>
+						</Button>
+						<div className='flex items-center space-x-2 sm:space-x-4'>
+							<UserButton />
+						</div>
 					</div>
 				</div>
 			</header>
