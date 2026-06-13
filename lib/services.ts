@@ -162,6 +162,7 @@ export async function createTask(
 		due_date: string | null;
 		priority: 'low' | 'medium' | 'high';
 		sort_order: number;
+		is_completed: boolean;
 	},
 ): Promise<Task> {
 	const { data, error } = await supabase

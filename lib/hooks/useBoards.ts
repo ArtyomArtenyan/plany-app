@@ -169,6 +169,7 @@ export function useBoard(boardId: string) {
 			const newTask = await createTask(supabase, {
 				...taskData,
 				sort_order: listTasks.length,
+				is_completed: false,
 			});
 			setTasks(prev => [...prev, newTask]);
 		} catch (err) {

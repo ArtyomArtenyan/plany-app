@@ -25,4 +25,5 @@ export type Task = {
 	priority: 'low' | 'medium' | 'high';
 	sort_order: number;
 	list_id: number;
+	is_completed: boolean;
 };
