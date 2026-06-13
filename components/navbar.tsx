@@ -29,7 +29,7 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 		return (
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
-					<div className='flex items-center space-x-2.5'>
+					<Link href="/" className='flex items-center space-x-2.5 hover:opacity-80 transition-opacity'>
 						<Image
 							src={plany_logo}
 							alt='Plany logo'
@@ -40,7 +40,7 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
-					</div>
+					</Link>
 
 					<div className='flex items-center space-x-2 sm:space-x-4'>
 						{isSignedIn ? (
@@ -94,7 +94,7 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 		return (
 			<header className='border-b border-white/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50'>
 				<div className='container mx-auto px-4 py-3 sm:py-4 h-16 flex items-center justify-between'>
-					<div className='flex items-center space-x-2.5'>
+					<Link href="/" className='flex items-center space-x-2.5 hover:opacity-80 transition-opacity'>
 						<Image
 							src={plany_logo}
 							alt='Plany logo'
@@ -105,7 +105,7 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 						<span className='text-xl sm:text-2xl font-bold tracking-tight text-gray-900'>
 							Plany
 						</span>
-					</div>
+					</Link>
 
 					<div className='flex items-center space-x-2 sm:space-x-4'>
 						<UserButton />
@@ -132,13 +132,15 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 							</span>
 						</Link>
 						<div className='w-px h-5 bg-gray-300 group-hover:bg-gray-900 hidden xs:block' />
-						<Image
-							src={plany_logo}
-							alt='Plany logo'
-							width={32}
-							height={32}
-							className='size-7 sm:size-10'
-						/>
+						<Link href="/" className='shrink-0 hover:opacity-80 transition-opacity'>
+							<Image
+								src={plany_logo}
+								alt='Plany logo'
+								width={32}
+								height={32}
+								className='size-7 sm:size-10'
+							/>
+						</Link>
 						<span className='text-xs sm:text-lg font-bold text-gray-900 truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none'>
 							{boardTitle}
 						</span>
