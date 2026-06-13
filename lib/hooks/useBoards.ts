@@ -17,6 +17,8 @@ import {
 import { useUser } from '@clerk/nextjs';
 import { useSuperbase } from '../superbase/SupabaseProvider';
 
+// Boards Hooks
+
 export const useBoards = () => {
 	const { user } = useUser();
 
@@ -96,6 +98,7 @@ export function useBoard(boardId: string) {
 					getBoard(supabase!, boardId),
 					getList(supabase!, boardId),
 				]);
+
 				setBoard(boardData);
 				setLists(listsData);
 
@@ -132,6 +135,8 @@ export function useBoard(boardId: string) {
 		}
 	}
 
+	// Lists Hooks
+
 	async function addList(title: string) {
 		if (!user || !supabase || !board) return;
 		try {
@@ -147,6 +152,8 @@ export function useBoard(boardId: string) {
 			console.error(err);
 		}
 	}
+
+	//Tasks Hooks
 
 	async function addTask(taskData: {
 		list_id: number;

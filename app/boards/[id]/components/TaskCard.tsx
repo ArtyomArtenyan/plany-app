@@ -1,6 +1,10 @@
 import { Task } from '@/lib/superbase/types';
 import { Lineicons } from '@lineiconshq/react-lineicons';
-import { Trash3Outlined, CalendarDaysOutlined, RefreshUser1Stroke } from '@lineiconshq/free-icons';
+import {
+	Trash3Outlined,
+	CalendarDaysOutlined,
+	RefreshUser1Stroke,
+} from '@lineiconshq/free-icons';
 
 interface TaskCardProps {
 	task: Task;
@@ -13,10 +17,7 @@ const priorityConfig = {
 	low: { dot: 'bg-sky-400', label: 'text-sky-500' },
 };
 
-export const TaskCard = ({
-	task,
-	openEditDialog,
-}: TaskCardProps) => {
+export const TaskCard = ({ task, openEditDialog }: TaskCardProps) => {
 	const priority = priorityConfig[task.priority];
 
 	return (
@@ -24,7 +25,6 @@ export const TaskCard = ({
 			className='group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg shadow-sm transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.98]'
 			onClick={() => openEditDialog(task)}
 		>
-			{/* Priority accent bar */}
 			<div
 				className={`absolute top-0 left-0 w-full h-0.75 ${
 					task.priority === 'high'

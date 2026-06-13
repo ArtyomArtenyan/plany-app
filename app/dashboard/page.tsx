@@ -42,25 +42,6 @@ const DashboardPage = () => {
 		}
 	};
 
-	// if (isLoading) {
-	// 	return (
-	// 		<div className='flex items-center justify-center min-h-screen'>
-	// 			<Lineicons
-	// 				className='animate-spin rounded-full h-12 w-12'
-	// 				icon={Spinner3Outlined}
-	// 			/>
-	// 			Loaded Board
-	// 		</div>
-	// 	);
-	// }
-	// if (error) {
-	// 	return (
-	// 		<div className='flex items-center justify-center min-h-screen'>
-	// 			<h2>Error loading boards</h2>
-	// 		</div>
-	// 	);
-	// }
-
 	return (
 		<div className='min-h-screen bg-gray-50'>
 			<Navbar />
