@@ -9,6 +9,8 @@ interface BoardColumnProps {
 	tasks: Task[];
 	onAddTask: (listId: number) => void;
 	onEditTask: (task: Task) => void;
+	onUpdateTask: (taskId: number, updates: Partial<Task>) => void;
+	onDeleteTask: () => void;
 }
 
 export const BoardColumn = ({
@@ -16,6 +18,8 @@ export const BoardColumn = ({
 	tasks,
 	onAddTask,
 	onEditTask,
+	onUpdateTask,
+	onDeleteTask,
 }: BoardColumnProps) => {
 	return (
 		<section className='w-full sm:w-87.5 shrink-0 bg-white/80 backdrop-blur-sm rounded-[28px] flex flex-col sm:max-h-full border border-white shadow-xl shadow-gray-200/40 transition-all'>
@@ -51,6 +55,8 @@ export const BoardColumn = ({
 								key={task.id}
 								task={task}
 								openEditDialog={onEditTask}
+								onUpdate={onUpdateTask}
+								onDelete={onDeleteTask}
 							/>
 						))}
 					</div>

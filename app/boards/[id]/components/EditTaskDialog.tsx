@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Lineicons } from '@lineiconshq/react-lineicons';
 import { Trash3Outlined } from '@lineiconshq/free-icons';
+import { Badge } from '@/components/ui/badge';
 
 interface EditTaskDialogProps {
 	isOpen: boolean;
@@ -32,6 +33,8 @@ interface EditTaskDialogProps {
 	setTaskDueDate: (val: string | null) => void;
 	taskPriority: 'low' | 'medium' | 'high';
 	setTaskPriority: (val: 'low' | 'medium' | 'high') => void;
+	isCompleted: boolean;
+	setIsCompleted: (val: boolean) => void;
 }
 
 export const EditTaskDialog = ({
@@ -49,13 +52,24 @@ export const EditTaskDialog = ({
 	setTaskDueDate,
 	taskPriority,
 	setTaskPriority,
+	isCompleted,
+	setIsCompleted,
 }: EditTaskDialogProps) => {
 	return (
 		<Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
 			<DialogContent className='w-[95vw]! max-w-140! mx-auto!'>
-				<DialogHeader>
+				<DialogHeader className='flex flex-row items-center justify-between space-y-0'>
 					<DialogTitle>Edit Task</DialogTitle>
 				</DialogHeader>
+				<Badge
+					onClick={() => setIsCompleted(!isCompleted)}
+					variant={`${isCompleted ? 'secondary' : 'ghost'}`}
+				>
+					<div
+						className={`size-2 rounded-full ${isCompleted ? 'bg-emerald-500' : 'bg-gray-400'}`}
+					/>
+					{isCompleted ? 'Completed' : 'Mark as Done'}
+				</Badge>
 				<form onSubmit={onSubmit} className='space-y-4'>
 					<div className='space-y-2'>
 						<Label htmlFor='editTaskTitle'>Title</Label>
@@ -126,7 +140,6 @@ export const EditTaskDialog = ({
 							className='mr-auto text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl'
 						>
 							<Lineicons icon={Trash3Outlined} className='mr-2 size-4' />
-							Delete Task
 						</Button>
 						<Button
 							variant='secondary'

@@ -70,6 +70,7 @@ const BoardPage = () => {
 
 	const [isTaskDetail, setIsTaskDetail] = useState(false);
 	const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+	const [isTaskCompleted, setIsTaskCompleted] = useState(false);
 
 	// Board handlers
 	const handleBoardUpdate = async (e: React.FormEvent) => {
@@ -120,6 +121,7 @@ const BoardPage = () => {
 			assignee: taskAssignee,
 			due_date: taskDueDate,
 			priority: taskPriority,
+			is_completed: isTaskCompleted,
 		});
 
 		setIsTaskDetail(false);
@@ -142,6 +144,7 @@ const BoardPage = () => {
 		setTaskAssignee(task.assignee);
 		setTaskDueDate(task.due_date);
 		setTaskPriority(task.priority);
+		setIsTaskCompleted(task.is_completed);
 		setIsTaskDetail(true);
 	};
 
@@ -192,10 +195,12 @@ const BoardPage = () => {
 								tasks={tasks.filter(t => t.list_id === list.id)}
 								onAddTask={setAddingTaskToList}
 								onEditTask={openEditDialog}
+								onUpdateTask={taskUpdate}
+								onDeleteTask={handleDeleteTask}
 							/>
 						))}
 
-						<div className='w-full sm:w-[350px] flex-shrink-0 mb-8 sm:mb-0'>
+						<div className='w-full sm:w-87.5 shrink-0 mb-8 sm:mb-0'>
 							{isAddingList ? (
 								<div className='bg-[#EBECF0] rounded-2xl p-3 border border-gray-200 shadow-sm space-y-3 animate-in fade-in zoom-in-95 duration-200'>
 									<Input
@@ -287,6 +292,8 @@ const BoardPage = () => {
 				setTaskDueDate={setTaskDueDate}
 				taskPriority={taskPriority}
 				setTaskPriority={setTaskPriority}
+				isCompleted={isTaskCompleted}
+				setIsCompleted={setIsTaskCompleted}
 			/>
 
 			<Dialog open={isEditBoard} onOpenChange={setIsEditBoard}>

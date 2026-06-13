@@ -1,14 +1,16 @@
 import { Task } from '@/lib/superbase/types';
 import { Lineicons } from '@lineiconshq/react-lineicons';
 import {
-	Trash3Outlined,
 	CalendarDaysOutlined,
 	RefreshUser1Stroke,
+	Trash3Outlined,
 } from '@lineiconshq/free-icons';
 
 interface TaskCardProps {
 	task: Task;
 	openEditDialog: (task: Task) => void;
+	onUpdate: (taskId: number, updates: Partial<Task>) => void;
+	onDelete: (taskId: number) => void;
 }
 
 const priorityConfig = {
@@ -17,12 +19,17 @@ const priorityConfig = {
 	low: { dot: 'bg-sky-400', label: 'text-sky-500' },
 };
 
-export const TaskCard = ({ task, openEditDialog }: TaskCardProps) => {
+export const TaskCard = ({
+	task,
+	openEditDialog,
+	onUpdate,
+	onDelete,
+}: TaskCardProps) => {
 	const priority = priorityConfig[task.priority];
 
 	return (
 		<div
-			className='group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg shadow-sm transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.98]'
+			className={`group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg shadow-sm transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.98] ${task.is_completed ? 'opacity-60' : ''}`}
 			onClick={() => openEditDialog(task)}
 		>
 			<div
@@ -36,32 +43,53 @@ export const TaskCard = ({ task, openEditDialog }: TaskCardProps) => {
 			/>
 
 			<div className='p-4 flex flex-col gap-3'>
-				{/* Top row */}
 				<div className='flex items-start justify-between gap-2'>
-					<div className='flex items-center gap-1 flex-1 min-w-0'>
-						<p className='text-sm font-bold text-gray-800 leading-snug truncate group-hover:text-gray-900 transition-colors'>
+					<div className='flex items-center gap-2 flex-1 min-w-0'>
+						<button
+							onClick={e => {
+								e.stopPropagation();
+								onUpdate(task.id, { is_completed: !task.is_completed });
+							}}
+							className={`shrink-0 size-5 rounded-full border-2 transition-all flex items-center justify-center ${task.is_completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-200 hover:border-emerald-400 hover:bg-emerald-50 text-transparent'}`}
+						>
+							<div
+								className={`size-1.5 rounded-full bg-current ${task.is_completed ? 'scale-125' : ''}`}
+							/>
+						</button>
+						<p
+							className={`text-sm font-bold text-gray-800 leading-snug truncate group-hover:text-gray-900 transition-colors ${task.is_completed ? 'line-through text-gray-400' : ''}`}
+						>
 							{task.title}
 						</p>
 					</div>
 
-					<div className='flex items-center gap-1.5 shrink-0 bg-gray-50 px-2 py-0.5 rounded-md'>
-						<div className={`size-1 rounded-full ${priority.dot}`} />
-						<span
-							className={`text-[9px] font-bold uppercase tracking-widest ${priority.label}`}
+					<div className='flex items-center gap-1.5 shrink-0'>
+						<button
+							onClick={e => {
+								e.stopPropagation();
+								onDelete(task.id);
+							}}
+							className={`${task.is_completed ? 'opacity-100' : 'opacity-0'} opacity-0  p-1.5 bg-red-50 text-red-500 group-hover:bg-red-200  group-hover:text-red-700 rounded-lg transition-all`}
 						>
-							{task.priority}
-						</span>
+							<Lineicons icon={Trash3Outlined} className='size-3.5' />
+						</button>
+						<div className='bg-gray-50 px-2 py-0.5 rounded-md flex items-center gap-1.5'>
+							<div className={`size-1 rounded-full ${priority.dot}`} />
+							<span
+								className={`text-[9px] font-bold uppercase tracking-widest ${priority.label}`}
+							>
+								{task.priority}
+							</span>
+						</div>
 					</div>
 				</div>
 
-				{/* Description */}
 				{task.description && (
 					<p className='text-xs text-gray-400 leading-relaxed line-clamp-2 pl-7'>
 						{task.description}
 					</p>
 				)}
 
-				{/* Bottom row */}
 				<div className='flex items-center justify-between pl-7'>
 					{task.due_date ? (
 						<div className='flex items-center gap-1 text-gray-400'>
