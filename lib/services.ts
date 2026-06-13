@@ -1,4 +1,4 @@
-import { Board, Lists } from './superbase/types';
+import { Board, Lists, Task } from './superbase/types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
@@ -130,4 +130,71 @@ export async function createBoardWithDefaults(
 	);
 
 	return board;
+}
+
+/**
+ * Tasks
+ **/
+
+export async function getTasks(
+	supabase: SupabaseClient,
+	listIds: number[],
+): Promise<Task[]> {
+	if (listIds.length === 0) return [];
+
+	const { data, error } = await supabase
+		.from('tasks')
+		.select('*')
+		.in('list_id', listIds)
+		.order('sort_order', { ascending: true });
+
+	if (error) throw new Error(error.message);
+	return data || [];
+}
+
+export async function createTask(
+	supabase: SupabaseClient,
+	taskData: {
+		list_id: number;
+		title: string;
+		description: string | null;
+		assignee: string | null;
+		due_date: string | null;
+		priority: 'low' | 'medium' | 'high';
+		sort_order: number;
+	},
+): Promise<Task> {
+	const { data, error } = await supabase
+		.from('tasks')
+		.insert({ ...taskData, created_at: new Date().toISOString() })
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+	return data;
+}
+
+export async function updateTask(
+	supabase: SupabaseClient,
+	taskId: number,
+	updates: Partial<Task>,
+): Promise<Task> {
+	const { data, error } = await supabase
+		.from('tasks')
+		.update(updates)
+		.eq('id', taskId)
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+	return data;
+}
+
+export async function deleteTask(
+	supabase: SupabaseClient,
+	taskId: number,
+): Promise<void> {
+	const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+
+	if (error) throw new Error(error.message);
 }
