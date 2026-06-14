@@ -47,6 +47,8 @@ const BoardPage = () => {
 		error,
 		boardUpdate,
 		addList,
+		listUpdate,
+		listDelete,
 		addTask,
 		taskUpdate,
 		taskDelete,
@@ -197,6 +199,8 @@ const BoardPage = () => {
 								onEditTask={openEditDialog}
 								onUpdateTask={taskUpdate}
 								onDeleteTask={handleDeleteTask}
+								onUpdateList={listUpdate}
+								onDeleteList={listDelete}
 							/>
 						))}
 

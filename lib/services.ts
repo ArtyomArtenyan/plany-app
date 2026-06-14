@@ -107,6 +107,30 @@ export async function createList(
 	return data;
 }
 
+export async function updateList(
+	supabase: SupabaseClient,
+	id: number,
+	updates: Partial<Lists>,
+): Promise<Lists> {
+	const { data, error } = await supabase
+		.from('lists')
+		.update({ ...updates })
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+	return data;
+}
+
+export async function deleteList(
+	supabase: SupabaseClient,
+	id: number,
+): Promise<void> {
+	const { error } = await supabase.from('lists').delete().eq('id', id);
+
+	if (error) throw new Error(error.message);
+}
 export async function createBoardWithDefaults(
 	supabase: SupabaseClient,
 	title: string,

@@ -6,12 +6,14 @@ import {
 	createBoardWithDefaults,
 	createList,
 	createTask,
+	deleteList,
 	deleteTask,
 	getBoard,
 	getBoards,
 	getList,
 	getTasks,
 	updateBoard,
+	updateList,
 	updateTask,
 } from '../services';
 import { useUser } from '@clerk/nextjs';
@@ -153,6 +155,34 @@ export function useBoard(boardId: string) {
 		}
 	}
 
+	async function listUpdate(id: number, updates: Partial<Lists>) {
+		try {
+			setIsLoading(true);
+			const updatedList = await updateList(supabase!, id, updates);
+			setLists(prev => prev.map(l => (l.id === id ? updatedList : l)));
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to update Board');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function listDelete(id: number) {
+		try {
+			setIsLoading(true);
+			await deleteList(supabase!, id);
+			setLists(prev => prev.filter(l => l.id !== id));
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to delete List');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
 	//Tasks Hooks
 
 	async function addTask(taskData: {
@@ -205,6 +235,8 @@ export function useBoard(boardId: string) {
 		tasks,
 		boardUpdate,
 		addList,
+		listUpdate,
+		listDelete,
 		addTask,
 		taskUpdate,
 		taskDelete,
