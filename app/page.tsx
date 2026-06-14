@@ -59,7 +59,7 @@ export default function Home() {
 									</Link>
 								) : (
 									<>
-										<SignInButton mode='modal'>
+										<SignInButton mode='redirect' forceRedirectUrl='/dashboard'>
 											<Button
 												size='lg'
 												className='h-14 px-8 text-lg bg-gray-900 rounded-2xl w-full sm:w-auto'
