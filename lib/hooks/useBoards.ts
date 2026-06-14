@@ -1,41 +1,55 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Board } from '../superbase/types';
-import { createBoardWithDefaults, getBoards } from '../services';
+import { Board, Lists, Task } from '../superbase/types';
+import {
+	createBoardWithDefaults,
+	createList,
+	createTask,
+	deleteBoard,
+	deleteList,
+	deleteTask,
+	getBoard,
+	getBoards,
+	getList,
+	getTasks,
+	updateBoard,
+	updateList,
+	updateTask,
+} from '../services';
 import { useUser } from '@clerk/nextjs';
 import { useSuperbase } from '../superbase/SupabaseProvider';
+
+// Boards Hooks
 
 export const useBoards = () => {
 	const { user } = useUser();
 
 	const [boards, setBoards] = useState<Board[]>([]);
-	const [loaded, setLoading] = useState<Boolean>(false);
-	const [error, setError] = useState<String | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>(null);
 	const { supabase } = useSuperbase();
 
 	useEffect(() => {
 		if (!user || !supabase) return;
 
+		const userId = user.id;
+		async function loadBoards() {
+			try {
+				setIsLoading(true);
+				const boardsData = await getBoards(supabase!, userId);
+				setBoards(boardsData);
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else setError('Failed to load Boards');
+			} finally {
+				setIsLoading(false);
+			}
+		}
+
 		loadBoards();
 	}, [user, supabase]);
-
-	async function loadBoards() {
-		if (!user) {
-			throw new Error('User not authenticated');
-		}
-		try {
-			setLoading(true);
-			const boardsData = await getBoards(supabase!, user.id);
-			setBoards(boardsData);
-		} catch (err) {
-			if (err instanceof Error) {
-				setError(err.message);
-			} else setError('Failed to load Boards');
-		} finally {
-			setLoading(false);
-		}
-	}
 
 	async function createBoard({
 		title,
@@ -65,5 +79,181 @@ export const useBoards = () => {
 			console.error(error);
 		}
 	}
-	return { createBoard, boards, loaded, error };
+	return { createBoard, boards, isLoading, error };
 };
+
+export function useBoard(boardId: string) {
+	const { user } = useUser();
+	const [board, setBoard] = useState<Board | null>(null);
+	const [lists, setLists] = useState<Lists[]>([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
+
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>(null);
+	const { supabase } = useSuperbase();
+	useEffect(() => {
+		if (!boardId || !supabase) return;
+
+		async function loadBoard() {
+			try {
+				setIsLoading(true);
+				const [boardData, listsData] = await Promise.all([
+					getBoard(supabase!, boardId),
+					getList(supabase!, boardId),
+				]);
+
+				setBoard(boardData);
+				setLists(listsData);
+
+				if (listsData.length > 0) {
+					const tasksData = await getTasks(
+						supabase!,
+						listsData.map(l => l.id),
+					);
+					setTasks(tasksData);
+				}
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else setError('Failed to load Boards');
+			} finally {
+				setIsLoading(false);
+			}
+		}
+
+		loadBoard();
+	}, [supabase, boardId]);
+
+	async function boardUpdate(boardId: string, updates: Partial<Board>) {
+		try {
+			setIsLoading(true);
+			const updatedData = await updateBoard(supabase!, boardId, updates);
+			setBoard(updatedData);
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to update Board');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function boardDelete(boardId: string) {
+		try {
+			setIsLoading(true);
+			await deleteBoard(supabase!, boardId);
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to delete Board');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	// Lists Hooks
+
+	async function addList(title: string) {
+		if (!user || !supabase || !board) return;
+		try {
+			const newList = await createList(
+				supabase,
+				board.id,
+				title,
+				lists.length,
+				user.id,
+			);
+			setLists(prev => [...prev, newList]);
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	async function listUpdate(id: number, updates: Partial<Lists>) {
+		try {
+			setIsLoading(true);
+			const updatedList = await updateList(supabase!, id, updates);
+			setLists(prev => prev.map(l => (l.id === id ? updatedList : l)));
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to update Board');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function listDelete(id: number) {
+		try {
+			setIsLoading(true);
+			await deleteList(supabase!, id);
+			setLists(prev => prev.filter(l => l.id !== id));
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to delete List');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	//Tasks Hooks
+
+	async function addTask(taskData: {
+		list_id: number;
+		title: string;
+		description: string | null;
+		assignee: string | null;
+		due_date: string | null;
+		priority: 'low' | 'medium' | 'high';
+	}) {
+		if (!user || !supabase) return;
+		try {
+			const listTasks = tasks.filter(t => t.list_id === taskData.list_id);
+			const newTask = await createTask(supabase, {
+				...taskData,
+				sort_order: listTasks.length,
+				is_completed: false,
+			});
+			setTasks(prev => [...prev, newTask]);
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	async function taskUpdate(taskId: number, updates: Partial<Task>) {
+		if (!user || !supabase) return;
+		try {
+			const updatedTask = await updateTask(supabase, taskId, updates);
+			setTasks(prev => prev.map(t => (t.id === taskId ? updatedTask : t)));
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	async function taskDelete(taskId: number) {
+		if (!user || !supabase) return;
+		try {
+			await deleteTask(supabase, taskId);
+			setTasks(prev => prev.filter(t => t.id !== taskId));
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	return {
+		isLoading,
+		error,
+		board,
+		lists,
+		tasks,
+		boardUpdate,
+		boardDelete,
+		addList,
+		listUpdate,
+		listDelete,
+		addTask,
+		taskUpdate,
+		taskDelete,
+	};
+}
