@@ -15,9 +15,10 @@ import { usePathname } from 'next/navigation';
 
 type BoardInfo = {
 	boardTitle?: string;
+	boardDescription?: string | null;
 	isEditBoard?: () => void;
 };
-const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
+const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 	const { isSignedIn, user } = useUser();
 
 	const pathName = usePathname();
@@ -153,13 +154,20 @@ const Navbar = ({ boardTitle, isEditBoard }: BoardInfo) => {
 								className='size-7 sm:size-10'
 							/>
 						</Link>
-						<span className='text-xs sm:text-lg font-bold text-gray-900 truncate max-w-20 xs:max-w-[120px] sm:max-w-none'>
-							{boardTitle}
-						</span>
+						<div className='flex flex-col min-w-0'>
+							<span className='text-xs sm:text-lg font-bold text-gray-900 truncate max-w-20 xs:max-w-[120px] sm:max-w-none'>
+								{boardTitle}
+							</span>
+							{boardDescription && (
+								<span className='text-[10px] text-gray-500 truncate max-w-[100px] xs:max-w-[150px] sm:max-w-[300px] -mt-1'>
+									{boardDescription}
+								</span>
+							)}
+						</div>
 						<Button
 							variant={'ghost'}
 							onClick={isEditBoard}
-							className='size-8 p-0'
+							className='size-8 p-0 shrink-0'
 						>
 							<Lineicons icon={MenuMeatballs1Outlined} className='size-4' />
 						</Button>

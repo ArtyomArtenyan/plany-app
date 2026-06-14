@@ -49,6 +49,15 @@ export async function updateBoard(
 	return data;
 }
 
+export async function deleteBoard(
+	supabase: SupabaseClient,
+	boardId: string,
+): Promise<void> {
+	const { error } = await supabase.from('boards').delete().eq('id', boardId);
+
+	if (error) throw new Error(error.message);
+}
+
 export async function createBoard(
 	supabase: SupabaseClient,
 	title: string,

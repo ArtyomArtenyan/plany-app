@@ -7,7 +7,11 @@ import { useBoard } from '@/lib/hooks/useBoards';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { Lineicons } from '@lineiconshq/react-lineicons';
-import { PlusStroke, Spinner3Outlined } from '@lineiconshq/free-icons';
+import {
+	PlusStroke,
+	Spinner3Outlined,
+	Trash3Outlined,
+} from '@lineiconshq/free-icons';
 import { Task } from '@/lib/superbase/types';
 
 // Components
@@ -46,6 +50,7 @@ const BoardPage = () => {
 		isLoading,
 		error,
 		boardUpdate,
+		boardDelete,
 		addList,
 		listUpdate,
 		listDelete,
@@ -56,6 +61,8 @@ const BoardPage = () => {
 
 	const [isEditBoard, setIsEditBoard] = useState(false);
 	const [boardTitle, setBoardTitle] = useState('');
+	const [boardDescription, setBoardDescription] = useState('');
+
 	const [boardColor, setBoardColor] = useState('');
 
 	const [isAddingList, setIsAddingList] = useState(false);
@@ -81,11 +88,27 @@ const BoardPage = () => {
 		try {
 			await boardUpdate(id, {
 				title: boardTitle.trim(),
+				description: boardDescription.trim(),
 				color: boardColor,
 			});
 		} catch {
 		} finally {
 			setIsEditBoard(false);
+		}
+	};
+
+	const handleBoardDelete = async () => {
+		if (
+			confirm(
+				`Are you sure you want to delete the board "${board?.title}"? This action cannot be undone.`,
+			)
+		) {
+			try {
+				await boardDelete(id);
+				window.location.href = '/dashboard';
+			} catch (err) {
+				console.error(err);
+			}
 		}
 	};
 
@@ -164,9 +187,11 @@ const BoardPage = () => {
 		>
 			<Navbar
 				boardTitle={board?.title}
+				boardDescription={board?.description}
 				isEditBoard={() => {
 					setIsEditBoard(true);
 					setBoardTitle(board?.title ?? '');
+					setBoardDescription(board?.description ?? '');
 					setBoardColor(board?.color ?? '');
 				}}
 			/>
@@ -301,15 +326,15 @@ const BoardPage = () => {
 			/>
 
 			<Dialog open={isEditBoard} onOpenChange={setIsEditBoard}>
-				<DialogContent className='rounded-3xl max-w-md'>
-					<DialogHeader>
-						<DialogTitle className='text-2xl font-bold'>Edit Board</DialogTitle>
+				<DialogContent className='w-[95vw]! max-w-140! mx-auto!'>
+					<DialogHeader className='flex flex-row items-center justify-between space-y-0'>
+						<DialogTitle>Edit Board</DialogTitle>
 					</DialogHeader>
-					<form onSubmit={handleBoardUpdate} className='space-y-6 pt-4'>
+					<form onSubmit={handleBoardUpdate} className='space-y-4'>
 						<div className='space-y-2'>
 							<Label
 								htmlFor='boardTitle'
-								className='text-sm font-bold uppercase tracking-wider text-gray-500'
+								className='text-sm tracking-wider text-gray-500'
 							>
 								Board Title
 							</Label>
@@ -317,26 +342,48 @@ const BoardPage = () => {
 								id='boardTitle'
 								value={boardTitle}
 								onChange={e => setBoardTitle(e.target.value)}
-								className='rounded-xl py-6 px-4 bg-gray-50 border-gray-200 focus:bg-white transition-all'
 								placeholder='Enter board title...'
 							/>
 						</div>
+						<div className='space-y-2'>
+							<Label
+								htmlFor='editTaskDescription'
+								className='text-sm tracking-wider text-gray-500'
+							>
+								Description
+							</Label>
+
+							<textarea
+								id='editTaskDescription'
+								value={boardDescription || ''}
+								onChange={e => setBoardDescription(e.target.value)}
+								className='flex w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 md:text-sm dark:bg-input/30 resize-none min-h-25 max-h-60 overflow-y-auto'
+							/>
+						</div>
 						<div className='space-y-3'>
-							<Label className='text-sm font-bold uppercase tracking-wider text-gray-500'>
+							<Label className='text-sm tracking-wider text-gray-500'>
 								Board Theme
 							</Label>
-							<div className='grid grid-cols-6 gap-3'>
+							<div className='grid grid-cols-6 gap-3 items-center'>
 								{colors.map(color => (
 									<button
 										key={color.id}
 										type='button'
 										onClick={() => setBoardColor(color.className)}
-										className={`${color.className} size-10 rounded-xl transition-all active:scale-90 ${boardColor === color.className ? 'ring-4 ring-offset-2 ring-blue-500 scale-110 shadow-lg' : 'hover:scale-105 opacity-80 hover:opacity-100'}`}
+										className={`${color.className} size-12 rounded-full transition-all active:scale-90 ${boardColor === color.className ? 'ring-2 ring-offset-2 ring-blue-500 scale-110 shadow-lg' : 'hover:scale-105 opacity-80 hover:opacity-100'}`}
 									/>
 								))}
 							</div>
 						</div>
 						<div className='flex justify-end items-center gap-3 pt-4'>
+							<Button
+								variant='ghost'
+								type='button'
+								onClick={handleBoardDelete}
+								className='mr-auto text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl'
+							>
+								<Lineicons icon={Trash3Outlined} className='mr-2 size-4' />
+							</Button>
 							<Button
 								variant='ghost'
 								type='button'

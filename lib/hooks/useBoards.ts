@@ -6,6 +6,7 @@ import {
 	createBoardWithDefaults,
 	createList,
 	createTask,
+	deleteBoard,
 	deleteList,
 	deleteTask,
 	getBoard,
@@ -137,6 +138,19 @@ export function useBoard(boardId: string) {
 		}
 	}
 
+	async function boardDelete(boardId: string) {
+		try {
+			setIsLoading(true);
+			await deleteBoard(supabase!, boardId);
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.message);
+			} else setError('Failed to delete Board');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
 	// Lists Hooks
 
 	async function addList(title: string) {
@@ -234,6 +248,7 @@ export function useBoard(boardId: string) {
 		lists,
 		tasks,
 		boardUpdate,
+		boardDelete,
 		addList,
 		listUpdate,
 		listDelete,
