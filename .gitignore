@@ -40,10 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-<<<<<<< HEAD
 # clerk configuration (can include secrets)
 /.clerk/
-=======
 
 .tmp
->>>>>>> feature/dashboard
