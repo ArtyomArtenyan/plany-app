@@ -25,11 +25,18 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { useEffect } from 'react';
 
 const DashboardPage = () => {
 	const { user } = useUser();
 	const { createBoard, boards, isLoading, error } = useBoards();
 	const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
 	const hendleCreateBoard = async () => {
 		try {
 			await createBoard({
@@ -66,7 +73,10 @@ const DashboardPage = () => {
 				<main className='mx-auto py-6 sm:py-8 px-4'>
 					<div className='mb-6 sm:mb-8'>
 						<h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>
-							Welcome, {user?.firstName ?? user?.emailAddresses[0].emailAddress}
+							Welcome,{' '}
+							{!mounted
+								? '...'
+								: (user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress)}
 						</h1>
 						<p className='text-gray-600'>
 							{"Here's what's happening with your boards today."}

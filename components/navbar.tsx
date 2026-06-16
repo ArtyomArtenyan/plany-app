@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import plany_logo from '@/public/plany-logo.svg';
@@ -20,6 +21,11 @@ type BoardInfo = {
 };
 const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 	const { isSignedIn, user } = useUser();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	const pathName = usePathname();
 	const isHomePage = pathName === '/';
@@ -47,11 +53,13 @@ const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 					</Link>
 
 					<div className='flex items-center space-x-2 sm:space-x-4'>
-						{isSignedIn ? (
+						{!mounted ? (
+							<div className='w-24 h-9 bg-gray-200 animate-pulse rounded-lg' />
+						) : isSignedIn ? (
 							<div className='flex flex-col sm:flex-row items-end sm:items-center space-y-1 sm:space-y-0 sm:space-x-4'>
 								<span className='text-xs sm:text-sm text-gray-600 hidden sm:block'>
 									Welcome,{' '}
-									{user.firstName ?? user.emailAddresses[0].emailAddress}
+									{user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress}
 								</span>
 								<Link href='/dashboard'>
 									<Button
@@ -115,7 +123,11 @@ const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 					</Link>
 
 					<div className='flex items-center space-x-2 sm:space-x-4'>
-						<UserButton />
+						{mounted ? (
+							<UserButton />
+						) : (
+							<div className='w-8 h-8 rounded-full bg-gray-200 animate-pulse' />
+						)}
 					</div>
 				</div>
 			</header>
@@ -184,13 +196,18 @@ const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 							<span className='hidden sm:inline'>Filter</span>
 						</Button>
 						<div className='flex items-center space-x-1 sm:space-x-4'>
-							<UserButton />
+							{mounted ? (
+								<UserButton />
+							) : (
+								<div className='w-8 h-8 rounded-full bg-gray-200 animate-pulse' />
+							)}
 						</div>
 					</div>
 				</div>
 			</header>
 		);
 	}
+	return null;
 };
 
 export default Navbar;

@@ -14,6 +14,11 @@ import plany_logo from '@/public/plany-logo.svg';
 
 export default function Home() {
 	const { isSignedIn } = useUser();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	return (
 		<div className='min-h-screen bg-white'>
@@ -44,7 +49,9 @@ export default function Home() {
 							</p>
 
 							<div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
-								{isSignedIn ? (
+								{!mounted ? (
+									<div className='h-14 w-48 bg-gray-200 animate-pulse rounded-2xl' />
+								) : isSignedIn ? (
 									<Link href='/dashboard'>
 										<Button
 											size='lg'
