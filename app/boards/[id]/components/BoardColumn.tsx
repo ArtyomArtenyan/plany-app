@@ -13,16 +13,22 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+	useSortable,
+	SortableContext,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface BoardColumnProps {
 	list: Lists;
 	tasks: Task[];
 	onAddTask: (listId: number) => void;
 	onEditTask: (task: Task) => void;
-	onUpdateTask: (taskId: number, updates: Partial<Task>) => void;
-	onDeleteTask: (taskId: number) => void;
-	onUpdateList: (listId: number, updates: Partial<Lists>) => void;
-	onDeleteList: (listId: number) => void;
+	onUpdateTask: (taskId: number, updates: Partial<Task>) => Promise<void>;
+	onDeleteTask: (taskId: number) => Promise<void>;
+	onUpdateList: (listId: number, updates: Partial<Lists>) => Promise<void>;
+	onDeleteList: (listId: number) => Promise<void>;
 }
 
 export const BoardColumn = ({
@@ -38,6 +44,26 @@ export const BoardColumn = ({
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
 	const [title, setTitle] = useState(list.title);
 
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({
+		id: list.id,
+		data: {
+			type: 'Column',
+			list,
+		},
+	});
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+
 	const handleTitleUpdate = () => {
 		if (title.trim() && title !== list.title) {
 			onUpdateList(list.id, { title: title.trim() });
@@ -45,9 +71,27 @@ export const BoardColumn = ({
 		setIsEditingTitle(false);
 	};
 
+	if (isDragging) {
+		return (
+			<section
+				ref={setNodeRef}
+				style={style}
+				className='w-full sm:w-87.5 shrink-0 bg-gray-100/50 border border-dashed border-gray-300 rounded-[28px] min-h-125 opacity-50'
+			/>
+		);
+	}
+
 	return (
-		<section className='w-full sm:w-87.5 shrink-0 bg-white/80 backdrop-blur-sm rounded-[28px] flex flex-col sm:max-h-full border border-white shadow-xl shadow-gray-200/40 transition-all'>
-			<div className='p-5 flex items-center justify-between'>
+		<section
+			ref={setNodeRef}
+			style={style}
+			className='w-full sm:w-87.5 shrink-0 bg-white/80 backdrop-blur-sm rounded-[28px] flex flex-col sm:max-h-full border border-white shadow-xl shadow-gray-200/40 transition-all'
+		>
+			<div
+				{...attributes}
+				{...listeners}
+				className='p-5 flex items-center justify-between cursor-grab active:cursor-grabbing'
+			>
 				<div className='flex items-center gap-2.5 flex-1 min-w-0'>
 					{isEditingTitle ? (
 						<input
@@ -66,8 +110,11 @@ export const BoardColumn = ({
 						/>
 					) : (
 						<h3
-							className='font-bold text-gray-800 tracking-wide px-1 text-sm sm:text-base uppercase truncate cursor-pointer hover:bg-gray-100 rounded'
-							onClick={() => setIsEditingTitle(true)}
+							className='font-bold text-gray-800 tracking-wide px-1 text-sm sm:text-base uppercase truncate hover:bg-gray-100 rounded'
+							onClick={e => {
+								e.stopPropagation();
+								setIsEditingTitle(true);
+							}}
 						>
 							{list.title}
 						</h3>
@@ -81,12 +128,13 @@ export const BoardColumn = ({
 						<Button
 							variant='ghost'
 							size='sm'
+							onClick={e => e.stopPropagation()}
 							className='size-8 p-0 rounded-lg hover:bg-gray-300/50 text-gray-500 shrink-0'
 						>
 							<Lineicons icon={MenuMeatballs1Outlined} className='size-4' />
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent>
+					<DropdownMenuContent onClick={e => e.stopPropagation()}>
 						<DropdownMenuGroup>
 							<DropdownMenuItem onClick={() => setIsEditingTitle(true)}>
 								Edit
@@ -113,26 +161,33 @@ export const BoardColumn = ({
 				</DropdownMenu>
 			</div>
 
-			<div className='flex-1 sm:overflow-y-auto px-3 pb-2 custom-scrollbar min-h-12.5'>
-				{tasks.length === 0 ? (
-					<div className='flex flex-col items-center justify-center text-gray-400 gap-2 mb-2'>
-						<p className='text-[10px] font-medium uppercase tracking-widest'>
-							Empty
-						</p>
-					</div>
-				) : (
-					<div className='grid grid-cols-1 gap-3 mb-2'>
-						{tasks.map(task => (
-							<TaskCard
-								key={task.id}
-								task={task}
-								openEditDialog={onEditTask}
-								onUpdate={onUpdateTask}
-								onDelete={onDeleteTask}
-							/>
-						))}
-					</div>
-				)}
+			<div
+				className={`flex-1 sm:overflow-y-auto px-3 pb-2 custom-scrollbar min-h-12.5 transition-colors rounded-2xl`}
+			>
+				<SortableContext
+					items={tasks.map(t => t.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					{tasks.length === 0 ? (
+						<div className='flex flex-col items-center justify-center text-gray-400 gap-2 mb-2 py-8 border-2 border-dashed border-gray-100 rounded-2xl'>
+							<p className='text-[10px] font-medium uppercase tracking-widest'>
+								Empty
+							</p>
+						</div>
+					) : (
+						<div className='grid grid-cols-1 gap-3 mb-2'>
+							{tasks.map(task => (
+								<TaskCard
+									key={task.id}
+									task={task}
+									openEditDialog={onEditTask}
+									onUpdate={onUpdateTask}
+									onDelete={onDeleteTask}
+								/>
+							))}
+						</div>
+					)}
+				</SortableContext>
 			</div>
 
 			<div className='p-2'>

@@ -1,3 +1,4 @@
+'use client';
 import { Task } from '@/lib/superbase/types';
 import { Lineicons } from '@lineiconshq/react-lineicons';
 import {
@@ -5,12 +6,14 @@ import {
 	RefreshUser1Stroke,
 	Trash3Outlined,
 } from '@lineiconshq/free-icons';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
 	task: Task;
 	openEditDialog: (task: Task) => void;
-	onUpdate: (taskId: number, updates: Partial<Task>) => void;
-	onDelete: (taskId: number) => void;
+	onUpdate: (taskId: number, updates: Partial<Task>) => Promise<void>;
+	onDelete: (taskId: number) => Promise<void>;
 }
 
 const priorityConfig = {
@@ -27,9 +30,43 @@ export const TaskCard = ({
 }: TaskCardProps) => {
 	const priority = priorityConfig[task.priority];
 
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({
+		id: task.id,
+		data: {
+			type: 'Task',
+			task,
+		},
+	});
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+
+	if (isDragging) {
+		return (
+			<div
+				ref={setNodeRef}
+				style={style}
+				className='bg-gray-100/50 border border-dashed border-gray-300 rounded-2xl h-25 w-full opacity-50'
+			/>
+		);
+	}
+
 	return (
 		<div
-			className={`group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg shadow-sm transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.98] ${task.is_completed ? 'opacity-60' : ''}`}
+			ref={setNodeRef}
+			style={style}
+			{...attributes}
+			{...listeners}
+			className={`group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg shadow-sm transition-all duration-200 cursor-grab active:cursor-grabbing overflow-hidden ${task.is_completed ? 'opacity-60' : ''}`}
 			onClick={() => openEditDialog(task)}
 		>
 			<div

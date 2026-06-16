@@ -11,6 +11,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import plany_logo from '@/public/plany-logo.svg';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
 	const { isSignedIn } = useUser();
