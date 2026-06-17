@@ -21,6 +21,9 @@ import {
 	SortableContext,
 	horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { useState } from 'react';
+
+import { BoardPageSkeleton } from '@/components/skeletons/BoardSkeleton';
 
 const BoardPage = () => {
 	const { id } = useParams<{ id: string }>();
@@ -76,6 +79,10 @@ const BoardPage = () => {
 		openEditTask,
 		closeEditTask,
 	} = useBoardModals(board);
+
+	const [priorityFilter, setPriorityFilter] = useState<
+		'all' | 'low' | 'medium' | 'high'
+	>('all');
 
 	const {
 		activeColumn,
@@ -160,6 +167,19 @@ const BoardPage = () => {
 		}
 	};
 
+	const filteredTasks = tasks.filter(task => {
+		if (priorityFilter === 'all') return true;
+		return task.priority === priorityFilter;
+	});
+
+	const stats = {
+		total: tasks.length,
+		completed: tasks.filter(t => t.is_completed).length,
+		high: tasks.filter(t => t.priority === 'high').length,
+		medium: tasks.filter(t => t.priority === 'medium').length,
+		low: tasks.filter(t => t.priority === 'low').length,
+	};
+
 	return (
 		<div
 			className={`min-h-screen flex flex-col transition-colors duration-700 ${board?.color ? board.color + '/10' : 'bg-[#F4F5F7]'}`}
@@ -168,7 +188,41 @@ const BoardPage = () => {
 				boardTitle={board?.title}
 				boardDescription={board?.description}
 				isEditBoard={openEditBoard}
+				priorityFilter={priorityFilter}
+				setPriorityFilter={setPriorityFilter as any}
 			/>
+
+			<div className='bg-white/40 backdrop-blur-sm border-b border-gray-200/50 py-2 px-4 sm:px-8'>
+				<div className='container mx-auto flex flex-wrap items-center gap-4 sm:gap-8 text-xs text-gray-600'>
+					<div className='flex items-center gap-2'>
+						<span className='font-semibold text-gray-900'>Total Tasks:</span>
+						<span className='bg-gray-200/50 px-2 py-0.5 rounded-full'>{stats.total}</span>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='font-semibold text-gray-900'>Completed:</span>
+						<span className='bg-green-100 text-green-700 px-2 py-0.5 rounded-full'>
+							{stats.completed} / {stats.total}
+						</span>
+					</div>
+					<div className='hidden md:flex items-center gap-4 border-l border-gray-300 pl-8'>
+						<div className='flex items-center gap-1.5'>
+							<div className='size-2 rounded-full bg-red-500' />
+							<span>High: {stats.high}</span>
+						</div>
+						<div className='flex items-center gap-1.5'>
+							<div className='size-2 rounded-full bg-yellow-500' />
+							<span>Medium: {stats.medium}</span>
+						</div>
+						<div className='flex items-center gap-1.5'>
+							<div className='size-2 rounded-full bg-blue-500' />
+							<span>Low: {stats.low}</span>
+						</div>
+					</div>
+					<div className='ml-auto hidden lg:block text-gray-400'>
+						Last updated: {board ? new Date(board.updated_at).toLocaleDateString() : '...'}
+					</div>
+				</div>
+			</div>
 
 			{error && (
 				<div className='container mx-auto px-4 mt-4'>
@@ -179,13 +233,9 @@ const BoardPage = () => {
 			)}
 
 			{isLoading ? (
-				<div className='flex items-center justify-center min-h-screen'>
-					<Lineicons
-						className='animate-spin rounded-full h-12 w-12'
-						icon={Spinner3Outlined}
-					/>
-					Loaded Lists
-				</div>
+				<main className='flex-1 overflow-hidden'>
+					<BoardPageSkeleton />
+				</main>
 			) : (
 				<DndContext
 					sensors={sensors}
@@ -200,7 +250,7 @@ const BoardPage = () => {
 					>
 						<BoardContent
 							lists={lists}
-							tasks={tasks}
+							tasks={filteredTasks}
 							isAddingList={isAddingList}
 							setIsAddingList={setIsAddingList}
 							newListTitle={newListTitle}
@@ -218,7 +268,7 @@ const BoardPage = () => {
 						{activeColumn ? (
 							<BoardColumn
 								list={activeColumn}
-								tasks={tasks.filter(t => t.list_id === activeColumn.id)}
+								tasks={filteredTasks.filter(t => t.list_id === activeColumn.id)}
 								onAddTask={() => {}}
 								onEditTask={() => {}}
 								onUpdateTask={async () => {}}
