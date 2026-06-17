@@ -12,14 +12,32 @@ import {
 	Funnel1Outlined,
 	MenuMeatballs1Outlined,
 } from '@lineiconshq/free-icons';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { usePathname } from 'next/navigation';
 
 type BoardInfo = {
 	boardTitle?: string;
 	boardDescription?: string | null;
 	isEditBoard?: () => void;
+	searchQuery?: string;
+	setSearchQuery?: (query: string) => void;
+	priorityFilter?: string;
+	setPriorityFilter?: (priority: string) => void;
 };
-const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
+const Navbar = ({
+	boardTitle,
+	boardDescription,
+	isEditBoard,
+	searchQuery,
+	setSearchQuery,
+	priorityFilter,
+	setPriorityFilter,
+}: BoardInfo) => {
 	const { isSignedIn, user } = useUser();
 	const [mounted, setMounted] = useState(false);
 
@@ -184,18 +202,57 @@ const Navbar = ({ boardTitle, boardDescription, isEditBoard }: BoardInfo) => {
 							<Lineicons icon={MenuMeatballs1Outlined} className='size-4' />
 						</Button>
 					</div>
-					<div className='flex items-center gap-1 sm:gap-8'>
-						<Button
-							variant='ghost'
-							className='w-fit p-1 rounded-xl py-4 sm:py-5 px-2 sm:px-4'
-						>
-							<Lineicons
-								icon={Funnel1Outlined}
-								className='size-4.5 sm:size-5.5'
-							/>
-							<span className='hidden sm:inline'>Filter</span>
-						</Button>
-						<div className='flex items-center space-x-1 sm:space-x-4'>
+					<div className='flex items-center gap-1 sm:gap-4 flex-1 justify-end max-w-xl'>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant='ghost'
+									size='sm'
+									className='hidden sm:flex items-center gap-2 bg-gray-100/50 hover:bg-gray-200/50 border-none rounded-xl text-xs font-medium py-2 px-3 focus:ring-2 focus:ring-gray-200 outline-none transition-all'
+								>
+									<Lineicons
+										icon={Funnel1Outlined}
+										className='size-3.5 text-gray-500'
+									/>
+									<span className='capitalize'>
+										{priorityFilter === 'all'
+											? 'All Priorities'
+											: priorityFilter + ' Priority'}
+									</span>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align='end' className='w-48 rounded-xl p-1'>
+								<DropdownMenuItem
+									onClick={() => setPriorityFilter?.('all')}
+									className='rounded-lg cursor-pointer text-xs'
+								>
+									All Priorities
+								</DropdownMenuItem>
+								<div className='h-px bg-gray-100 my-1' />
+								<DropdownMenuItem
+									onClick={() => setPriorityFilter?.('high')}
+									className='rounded-lg cursor-pointer text-xs flex items-center gap-2'
+								>
+									<div className='size-2 rounded-full bg-red-500' /> High
+									Priority
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => setPriorityFilter?.('medium')}
+									className='rounded-lg cursor-pointer text-xs flex items-center gap-2'
+								>
+									<div className='size-2 rounded-full bg-yellow-500' /> Medium
+									Priority
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => setPriorityFilter?.('low')}
+									className='rounded-lg cursor-pointer text-xs flex items-center gap-2'
+								>
+									<div className='size-2 rounded-full bg-blue-500' /> Low
+									Priority
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+						<div className='flex items-center space-x-1 sm:space-x-4 shrink-0'>
 							{mounted ? (
 								<UserButton />
 							) : (
