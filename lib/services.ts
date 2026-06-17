@@ -1,10 +1,7 @@
 import { Board, Lists, Task } from './superbase/types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-/**
- * Boards
- **/
-
+// Boards
 export async function getBoards(
 	supabase: SupabaseClient,
 	userId: string,
@@ -75,10 +72,7 @@ export async function createBoard(
 	return data;
 }
 
-/**
- * Lists
- **/
-
+// Lists
 export async function getList(
 	supabase: SupabaseClient,
 	boardId: string,
@@ -165,10 +159,7 @@ export async function createBoardWithDefaults(
 	return board;
 }
 
-/**
- * Tasks
- **/
-
+// Tasks
 export async function getTasks(
 	supabase: SupabaseClient,
 	listIds: number[],

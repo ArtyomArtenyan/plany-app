@@ -24,8 +24,6 @@ type BoardInfo = {
 	boardTitle?: string;
 	boardDescription?: string | null;
 	isEditBoard?: () => void;
-	searchQuery?: string;
-	setSearchQuery?: (query: string) => void;
 	priorityFilter?: string;
 	setPriorityFilter?: (priority: string) => void;
 };
@@ -33,8 +31,6 @@ const Navbar = ({
 	boardTitle,
 	boardDescription,
 	isEditBoard,
-	searchQuery,
-	setSearchQuery,
 	priorityFilter,
 	setPriorityFilter,
 }: BoardInfo) => {
@@ -189,7 +185,7 @@ const Navbar = ({
 								{boardTitle}
 							</span>
 							{boardDescription && (
-								<span className='text-[10px] text-gray-500 truncate max-w-[100px] xs:max-w-[150px] sm:max-w-[300px] -mt-1'>
+								<span className='text-[10px] text-gray-500 truncate max-w-25 xs:max-w-[150px] sm:max-w-75 -mt-1'>
 									{boardDescription}
 								</span>
 							)}

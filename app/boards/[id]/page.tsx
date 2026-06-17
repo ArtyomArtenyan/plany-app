@@ -100,7 +100,7 @@ const BoardPage = () => {
 		taskUpdate,
 	});
 
-	// Handlers
+	// Board actions
 	const handleBoardUpdate = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!boardTitle.trim() || !board) return;
@@ -123,6 +123,7 @@ const BoardPage = () => {
 		}
 	};
 
+	// List actions
 	const handleAddList = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!newListTitle.trim()) return;
@@ -131,6 +132,7 @@ const BoardPage = () => {
 		setIsAddingList(false);
 	};
 
+	// Task actions
 	const handleAddTask = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!taskTitle.trim() || addingTaskToList === null) return;
