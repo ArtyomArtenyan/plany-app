@@ -75,13 +75,27 @@ export default function Home() {
 												Get Started for Free
 											</Button>
 										</SignInButton>
-										<Button
-											variant='outline'
-											size='lg'
-											className='h-14 px-8 text-lg rounded-2xl w-full sm:w-auto'
-										>
-											View Demo
-										</Button>
+										<div className='bg-gray-100/80 backdrop-blur-sm border border-gray-200 p-4 rounded-2xl text-left w-full sm:w-auto shadow-sm'>
+											<p className='text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-wider'>
+												Portfolio Demo Account
+											</p>
+											<div className='space-y-1.5'>
+												<div className='flex items-center justify-between gap-4'>
+													<span className='text-xs text-gray-500'>Email:</span>
+													<code className='text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded'>
+														demo@test.com
+													</code>
+												</div>
+												<div className='flex items-center justify-between gap-4'>
+													<span className='text-xs text-gray-500'>
+														Password:
+													</span>
+													<code className='text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded'>
+														Plany123.
+													</code>
+												</div>
+											</div>
+										</div>
 									</>
 								)}
 							</div>
